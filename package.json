@@ -1,0 +1,51 @@
+{
+  "name": "browser-agents",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "deploy": "npm run build && npm run wrangler -- deploy",
+    "dev": "docker compose up",
+    "docker:build": "docker compose build",
+    "login": "npm run wrangler -- login --device",
+    "shell": "docker compose run --rm app bash",
+    "wrangler": "docker compose run --rm app npx wrangler",
+    "test": "docker compose run --rm app npx vitest --run",
+    "cf-typegen": "npm run wrangler -- types",
+    "build": "docker compose run --rm app npm run build:container",
+    "lint": "docker compose run --rm app npm run lint:container",
+    "build:container": "tsc -b && vite build",
+    "dev:container": "vite --host 0.0.0.0",
+    "lint:container": "eslint ."
+  },
+  "dependencies": {
+    "@cloudflare/ai-chat": "^0.7.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "agents": "^0.22.0",
+    "ai": "^6.0.182",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "tailwindcss": "^4.3.0",
+    "workers-ai-provider": "^3.1.14",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^8.0.2",
+    "@cloudflare/puppeteer": "^1.4.0",
+    "@cloudflare/vite-plugin": "^1.37.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.5.0",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.58.2",
+    "vite": "^8.0.10",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.129.0"
+  }
+}
