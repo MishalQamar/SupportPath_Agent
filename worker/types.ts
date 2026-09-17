@@ -1,3 +1,5 @@
+import type { JourneyStatus } from './journey-policy';
+
 export type EvidenceItem = {
   key: string;
   url: string;
@@ -11,4 +13,7 @@ export type BrowserAgentState = {
   evidence: EvidenceItem[];
   route: string[];
   hopCount: number;
+  journeyStatus: JourneyStatus;
+  journeyError: string | null;
+  featuredJourney: boolean;
 };

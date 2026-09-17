@@ -1,0 +1,3 @@
+CLOUDFLARE_ACCOUNT_ID=your-account-id
+CLOUDFLARE_API_TOKEN=your-browser-rendering-api-token
+SESSION_SIGNING_KEY=replace-with-a-random-secret-of-at-least-32-characters

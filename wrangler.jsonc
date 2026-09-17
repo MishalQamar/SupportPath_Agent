@@ -13,7 +13,7 @@
   "compatibility_date": "2026-05-15",
   "assets": {
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/evidence/*"],
+    "run_worker_first": ["/api/*", "/agents/*", "/evidence/*"],
   },
   "observability": {
     "enabled": true,
