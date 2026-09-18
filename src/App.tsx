@@ -60,11 +60,12 @@ function Workspace({ sessionId }: { sessionId: string }) {
   const [input, setInput] = useState('');
   const [inputFeedback, setInputFeedback] = useState<string | null>(null);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
+  const [browserOpen, setBrowserOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isHandingOff, setIsHandingOff] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const agent = useAgent<BrowserAgentState>({
     agent: 'BrowserAgent',
     name: sessionId,
@@ -93,7 +94,8 @@ function Workspace({ sessionId }: { sessionId: string }) {
   }, [evidence]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    const container = messagesRef.current;
+    if (container) container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
   }, [messages, status]);
 
   const submitPrompt = (message: string) => {
@@ -217,18 +219,19 @@ function Workspace({ sessionId }: { sessionId: string }) {
           <div className="how-it-works"><div><span>1</span><p><strong>You describe</strong><br/>what you need</p></div><i/><div><span>2</span><p><strong>We navigate</strong><br/>the official site</p></div><i/><div><span>3</span><p><strong>You decide</strong><br/>what to do next</p></div></div>
         </div> : <div className="chat-layout">
           <div className="chat-heading"><div><span className={`status-dot ${isWorking ? 'working' : ''}`} /><span>{journeyStatus === 'user_in_control' ? 'You are in control' : journeyStatus === 'awaiting_takeover' ? 'Ready for your input' : isWorking ? 'Exploring Turn2us' : journeyStatus === 'found' ? 'Page found' : 'Support guide'}</span></div><span>{hopCount} of 5 steps used</span></div>
-          <div className="messages" aria-live="polite">{messages.map((message) => { const isUser = message.role === 'user'; return <article key={message.id} className={`message-row ${isUser ? 'user' : 'assistant'}`}>{!isUser && <span className="assistant-avatar"><Icon name="compass" size={16} /></span>}<div className="message-body"><span className="message-author">{isUser ? 'You' : 'SupportPath'}</span><div className="message-bubble">{renderMessage(message)}</div></div></article>; })}{status === 'submitted' && <article className="message-row assistant"><span className="assistant-avatar"><Icon name="compass" size={16} /></span><div className="message-body"><span className="message-author">SupportPath</span><div className="thinking"><span/><span/><span/></div></div></article>}{showError && <div className="error-banner" role="alert"><span>{showError}</span><div className="error-actions">{connectionError ? <button onClick={() => window.location.reload()}>Reconnect</button> : <><button onClick={() => { void retryQuestion(); }} disabled={isWorking || isResetting}>Retry this question</button><button onClick={() => { void resetJourney(); }} disabled={isWorking || isResetting}>New chat</button></>}</div></div>}<div ref={messagesEndRef} /></div>
+          <div className="messages" ref={messagesRef} aria-live="polite">{messages.map((message) => { const isUser = message.role === 'user'; return <article key={message.id} className={`message-row ${isUser ? 'user' : 'assistant'}`}>{!isUser && <span className="assistant-avatar"><Icon name="compass" size={16} /></span>}<div className="message-body"><span className="message-author">{isUser ? 'You' : 'SupportPath'}</span><div className="message-bubble">{renderMessage(message)}</div></div></article>; })}{status === 'submitted' && <article className="message-row assistant"><span className="assistant-avatar"><Icon name="compass" size={16} /></span><div className="message-body"><span className="message-author">SupportPath</span><div className="thinking"><span/><span/><span/></div></div></article>}{showError && <div className="error-banner" role="alert"><span>{showError}</span><div className="error-actions">{connectionError ? <button onClick={() => window.location.reload()}>Reconnect</button> : <><button onClick={() => { void retryQuestion(); }} disabled={isWorking || isResetting}>Retry this question</button><button onClick={() => { void resetJourney(); }} disabled={isWorking || isResetting}>New chat</button></>}</div></div>}</div>
           <div className="chat-composer-wrap">{isWorking && <button className="stop-button" onClick={() => { void stopExploring(); }}><Icon name="stop" size={12} /> Stop exploring</button>}<Composer input={input} isWorking={isWorking || isResetting || journeyStatus === 'awaiting_takeover' || journeyStatus === 'user_in_control'} setInput={updateInput} submitPrompt={submitPrompt} />{inputFeedback && <div className="input-feedback" role="alert">{inputFeedback}</div>}</div>
         </div>}
       </section>
 
       <aside className="journey-panel">
-        <div className="browser-card">
+        <div className={`browser-card ${browserOpen ? 'is-open' : ''}`}>
           <div className="browser-heading">
             <div><span className={`live-indicator ${liveUrl ? 'on' : ''}`} /> <strong>{liveUrl ? 'Live browser' : latestEvidence ? 'Saved page snapshot' : 'Browser preview'}</strong></div>
             {liveUrl && <span className="watching"><Icon name="eye" size={14} /> {journeyStatus === 'user_in_control' ? 'You have control' : 'View only'}</span>}
+            <button type="button" className="browser-toggle" aria-expanded={browserOpen} aria-controls="browser-frame" onClick={() => setBrowserOpen((open) => !open)}>{browserOpen ? 'Hide browser' : 'Show browser'} <span aria-hidden="true">{browserOpen ? '↑' : '↓'}</span></button>
           </div>
-          <div className="browser-frame">
+          <div className="browser-frame" id="browser-frame">
             <div className="browser-chrome"><div className="traffic"><span/><span/><span/></div><div className="address"><Icon name="lock" size={11} /> {latestEvidence ? new URL(latestEvidence.url).hostname : 'turn2us.org.uk'}</div></div>
             {liveUrl ? <iframe title="SupportPath live browser" src={liveUrl} allow="clipboard-read; clipboard-write" /> : latestEvidence ? <>
               <img className="last-capture" src={`/${latestEvidence.key}`} alt={`Saved screenshot: ${latestEvidence.title}`} />
