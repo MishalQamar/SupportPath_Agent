@@ -7,22 +7,19 @@ export const EXAMPLE_PROMPTS = [
     icon: 'heart',
     prompt: FEATURED_QUESTION,
   },
-  {
-    title: 'Help with energy bills',
-    description: 'Find a relevant support page',
-    icon: 'bolt',
-    prompt: 'Find a Turn2us page about help with energy bills. Stop on the first relevant page.',
-  },
+
   {
     title: 'Free school meals',
     description: 'Explore help with school costs',
     icon: 'family',
-    prompt: 'Find a Turn2us page about free school meals. Stop on the first relevant page.',
+    prompt:
+      'Find a Turn2us page about free school meals. Stop on the first relevant page.',
   },
   {
     title: 'Help with rent',
     description: 'Explore housing support',
     icon: 'wallet',
-    prompt: 'Find a Turn2us page about help with rent. Stop on the first relevant page.',
+    prompt:
+      'Find a Turn2us page about help with rent. Stop on the first relevant page.',
   },
 ] as const;

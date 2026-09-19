@@ -16,7 +16,7 @@ describe('question guardrails', () => {
   });
 
   it('accepts every clickable example as one focused question', () => {
-    expect(EXAMPLE_PROMPTS).toHaveLength(4);
+    expect(EXAMPLE_PROMPTS).toHaveLength(3);
     for (const example of EXAMPLE_PROMPTS) {
       expect(assessQuestion(example.prompt)).toEqual({ kind: 'ok' });
     }
